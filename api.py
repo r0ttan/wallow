@@ -2,7 +2,8 @@ import responder
 import redis, json, time, os
 
 baseurl = "api/v0.2"
-api = responder.API(debug=True)
+#api = responder.API(debug=True)
+app = responder.API(debug=True)
 
 def configurewall(confile):
     with open(confile) as cf:
@@ -16,17 +17,17 @@ def configurewall(confile):
 
 r = configurewall("wall.conf")
 
-@api.route('/')
+@app.route('/')
 async def default(req, resp):
     resp.text = f"thisis : not_json_response"
 
-@api.route('/test/{arg}')
+@app.route('/test/{arg}')
 def test(req, resp, *, arg):
     print("Test url_for")
     resp.media = api.url_for(checksaldo, account="abc123")
 
 
-@api.route('/deposit/{account}/{amount}')
+@app.route('/deposit/{account}/{amount}')
 def deposit(req, resp, *, account, amount):
     p = r.pipeline()
     p.lpushx("account:{}:transactions".format(account), "T{}+{}".format(r.time()[0],amount))
@@ -35,7 +36,7 @@ def deposit(req, resp, *, account, amount):
     #resp.media = { "url": url_for('checksaldo', accountname=account, _external=True) }
     resp.media = { "url": url_for('checksaldo', accountname=account, _external=True) }
 
-@api.route('/withdraw/{account}/{amount}')
+@app.route('/withdraw/{account}/{amount}')
 def withdraw(req, resp, *, account, amount):
     print("WITHDRAW")
     am = int(amount)
@@ -50,11 +51,11 @@ def withdraw(req, resp, *, account, amount):
     print("EXECUTED")
     resp.media = {"url": url_for('checksaldo', accountname=account, _external=True)}
 
-@api.route('/checksaldo/{account}')
+@app.route('/checksaldo/{account}')
 def checksaldo(req, resp, *, account):
     resp.media = result = r.hgetall("account:{}:balance".format(account))
 
-@api.route('/transactions/{account}/{listlen}')
+@app.route('/transactions/{account}/{listlen}')
 def checktrans(req, resp, *, account, listlen):
     result = r.lrange("account:{}:transactions".format(account), 0, listlen)
     print(result)
@@ -69,4 +70,4 @@ def checktrans(req, resp, *, account, listlen):
 
 
 if __name__ == '__main__':
-    api.run()
+    app.run()
