@@ -24,7 +24,7 @@ async def default(req, resp):
 @app.route('/test/{arg}')
 def test(req, resp, *, arg):
     print("Test url_for")
-    resp.media = api.url_for(checksaldo, account="abc123")
+    resp.media = app.url_for(checksaldo, account="abc123")
 
 
 @app.route('/deposit/{account}/{amount}')
