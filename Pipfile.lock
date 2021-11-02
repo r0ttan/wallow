@@ -301,7 +301,7 @@
                 "sha256:f8d59627702d2ff27cb495ca1abdea8bd8d581de425c56e93bff6517134e0a9b",
                 "sha256:fc30cdf2e949a2225b012a7911d1d031df3d23e99b7eda7dfc982dc4a860dae9"
             ],
-            "version": "==7.0"
+            "version": ">=9.1"
         },
         "whitenoise": {
             "hashes": [
